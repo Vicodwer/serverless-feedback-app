@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        input, textarea {
+            width: 300px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        #responseMsg {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Submit Feedback</h2>
+
+<form id="feedbackForm">
+    <input type="text" id="name" placeholder="Name" required><br>
+    <input type="email" id="email" placeholder="Email" required><br>
+    <textarea id="message" placeholder="Your Message" rows="4" required></textarea><br>
+    <button type="submit">Submit</button>
+</form>
+
+<p id="responseMsg"></p>
+
+<script>
+const API_URL = "https://YOUR_API_ID.execute-api.ap-south-1.amazonaws.com";
+
+document.getElementById("feedbackForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const data = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        message: document.getElementById("message").value
+    };
+
+    try {
+        const response = await fetch(API_URL + "/feedback", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            document.getElementById("responseMsg").innerText = result.message;
+            document.getElementById("feedbackForm").reset();
+        } else {
+            document.getElementById("responseMsg").innerText = result.error;
+        }
+
+    } catch (error) {
+        document.getElementById("responseMsg").innerText = "Error submitting feedback.";
+    }
+});
+</script>
+
+</body>
+</html>
